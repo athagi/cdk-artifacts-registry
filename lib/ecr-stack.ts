@@ -3,12 +3,13 @@ import * as cdk from '@aws-cdk/core'
 
 // ecr stack
 export interface RepostiroiesStacksProps extends cdk.StackProps {
-  repoNames: string[]
+  repoNames: string[],
+  lifecycleRule: ecr.LifecycleRule
 }
 
 export class RepositoriesStack extends cdk.Stack {
   public readonly repository: ecr.Repository;
-  readonly lifecycleRule: ecr.LifecycleRule = {
+  static LIFECYCLERULE: ecr.LifecycleRule = {
     maxImageCount: 10,
     rulePriority: 1,
     tagStatus: ecr.TagStatus.ANY
@@ -19,7 +20,7 @@ export class RepositoriesStack extends cdk.Stack {
 
     const repositories: string[] = props.repoNames; 
     repositories.forEach(repo => {
-      this.createRepository(repo, this.lifecycleRule);
+      this.createRepository(repo, props.lifecycleRule);
     });
   }
 

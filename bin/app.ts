@@ -14,7 +14,7 @@ const infra = new AppStack(app, 'CrossStackInfra');
 
 const repositories: string[] = ["hoge/aaaa", "hoge/bbbb", "fuga/aaa", "foo"];
 
-const ecrStack = new RepositoriesStack(app, 'Ecr-Stack', {repoNames: repositories});  
+const ecrStack = new RepositoriesStack(app, 'Ecr-Stack', {repoNames: repositories, lifecycleRule: RepositoriesStack.LIFECYCLERULE});  
 Tags.of(ecrStack).add("Owner", OWNER);
 
 
