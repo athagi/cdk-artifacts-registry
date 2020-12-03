@@ -5,7 +5,7 @@ install:
 	sudo npm install
 
 deploy:
-	cdk deploy
+	cdk deploy --all
 
 synth:
 	cdk synth
