@@ -2,31 +2,34 @@ import * as ecr from '@aws-cdk/aws-ecr'
 import * as cdk from '@aws-cdk/core'
 
 // ecr stack
-export interface EcrStackProps extends cdk.StackProps {
-  repoName: string
+export interface RepostiroiesStacksProps extends cdk.StackProps {
+  repoNames: string[]
 }
 
-export class EcrStack extends cdk.Stack {
+export class RepositoriesStack extends cdk.Stack {
   public readonly repository: ecr.Repository;
   readonly lifecycleRule: ecr.LifecycleRule = {
-      description: "this is test",
-      maxImageCount: 10,
-      rulePriority: 1,
-      tagStatus: ecr.TagStatus.ANY
-    }
+    maxImageCount: 10,
+    rulePriority: 1,
+    tagStatus: ecr.TagStatus.ANY
+  }
 
-  constructor(scope: cdk.Construct, id: string, props: EcrStackProps) {
+  constructor(scope: cdk.Construct, id: string, props: RepostiroiesStacksProps) {
     super(scope, id, props);
 
-    this.repository = new ecr.Repository(this, 'ecr-repository', {
-    imageScanOnPush: true,
-    repositoryName: props?.repoName,
-    removalPolicy: cdk.RemovalPolicy.DESTROY,
+    const repositories: string[] = props.repoNames; 
+    repositories.forEach(repo => {
+      this.createRepository(repo, this.lifecycleRule);
     });
-    this.repository.addLifecycleRule(this.lifecycleRule);
+  }
 
-
-  //   new cdk.CfnOutput(this, 'ecr-repository', { value: this.repository.repositoryName });
+  createRepository(repoName: string, lifecycleRule: ecr.LifecycleRule): ecr.Repository {
+    const repository = new ecr.Repository(this, repoName, {
+      imageScanOnPush: true,
+      repositoryName: repoName,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      });
+      repository.addLifecycleRule(lifecycleRule);
+      return repository
   }
 }
-  

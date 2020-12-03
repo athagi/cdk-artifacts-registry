@@ -2,28 +2,28 @@ import { expect as expectCDK, matchTemplate, MatchStyle, haveResource, countReso
 import * as cdk from '@aws-cdk/core';
 import * as Ecr from '../lib/ecr-stack';
 
-test('ECR project Created', () => {
+test('ECR projects Created', () => {
   const app = new cdk.App();
   // WHEN
-  const repoName = "testrepo"
-  const stack = new Ecr.EcrStack(app, 'MyTestStack', {repoName: repoName});
+  const repoNames = ["testrepo1", "testrepo2", "testrepo3", "testrepo4"]
+  const stack = new Ecr.RepositoriesStack(app, 'MyTestStack', {repoNames: repoNames});
   // THEN
-  expectCDK(stack).to(haveResource("AWS::ECR::Repository", {
+  repoNames.forEach(repo => {
+    expectCDK(stack).to(haveResource("AWS::ECR::Repository", {
+      RepositoryName: repo
+    }));
     
-    RepositoryName: repoName,
-    ImageScanningConfiguration: {
-      scanOnPush: true
-    },
-  }));
+  });
 });
 
 
 test('ECR repository count', () => {
   const app = new cdk.App();
   // WHEN
-  const repoName = "testrepo"
-  const stack = new Ecr.EcrStack(app, 'MyTestStack', {repoName: repoName});
+  const repoNames = ["testrepo1", "testrepo2", "testrepo3", "testrepo4"]
+  const stack = new Ecr.RepositoriesStack(app, 'MyTestStack', {repoNames: repoNames});
   // THEN
-  expectCDK(stack).to(countResources("AWS::ECR::Repository", 1))
-   
+  expectCDK(stack).to(countResources("AWS::ECR::Repository", repoNames.length))
 });
+
+
