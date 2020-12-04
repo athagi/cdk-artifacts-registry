@@ -3,6 +3,7 @@ import 'source-map-support/register';
 import * as cdk from '@aws-cdk/core';
 import { AppStack } from '../lib/app-stack';
 import { RepositoriesStack } from '../lib/ecr-stack';
+import { IamUserStack } from '../lib/iam-stack';
 import { Tags } from '@aws-cdk/core';
 
 const app = new cdk.App();
@@ -18,5 +19,9 @@ const ecrStack = new RepositoriesStack(app, 'Ecr-Stack', {repoNames: repositorie
 Tags.of(ecrStack).add("Owner", OWNER);
 
 
+const iamUsers = ["user1", 'user2', 'user3'];
+const iamStack = new IamUserStack(app, 'IAM-Stack', {
+  userNames: iamUsers,
+});
 
 app.synth()
