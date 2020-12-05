@@ -14,6 +14,11 @@ synth:
 test:
 	npm run test
 
+.PHONY: update-test
+test:
+	npm test -- -u
+
+
 build:
 	npm run build
 

@@ -20,8 +20,10 @@ Tags.of(ecrStack).add("Owner", OWNER);
 
 
 const iamUsers = ["user1", 'user2', 'user3'];
+const STRICTED_IPS: string[] = ["0.0.0.0/0"];
 const iamStack = new IamUserStack(app, 'IAM-Stack', {
   userNames: iamUsers,
+  stricted_ips: STRICTED_IPS,
 });
 
 app.synth()
