@@ -3,7 +3,8 @@ import * as cdk from '@aws-cdk/core'
 
 export interface IamUserStacksProps extends cdk.StackProps {
   userNames: string[],
-  stricted_ips: string[],
+  strictedIps: string[],
+  groupName: string,
 }
 
 export class IamUserStack extends cdk.Stack {
@@ -11,24 +12,18 @@ export class IamUserStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props: IamUserStacksProps) {
     super(scope, id, props);
 
-    const group: iam.Group = new iam.Group(this, "infra-group", {
-      groupName: "infra-groupA",
+    const group: iam.Group = new iam.Group(this, props.groupName, {
+      groupName: props.groupName,
     });
-
-    const readPolicy: iam.ManagedPolicy = new iam.ManagedPolicy(this, "managed-policy", {
-      description: "test managed policy",
-      managedPolicyName: "ECRReadOnlyPolicy",
-      document: iam.PolicyDocument.fromJson(this.generateDefaultPolicy(props.stricted_ips)),
+    const baseGroupInlinePolicy: iam.Policy = new iam.Policy(this, group + "InlinePolicy", {
+      document: iam.PolicyDocument.fromJson(this.generateDefaultPolicyJson(props.strictedIps))
     });
-
-    group.addManagedPolicy(readPolicy);
+    group.attachInlinePolicy(baseGroupInlinePolicy);
 
     const users = props.userNames; 
-    const document = iam.PolicyDocument.fromJson(this.generateInlinePolicy("hogehoge"));
-    
+    const document = iam.PolicyDocument.fromJson(this.generateInlinePolicyJson("policyDocument"));
     users.forEach(u => {
       const user: iam.User = this.createIamUser(u, group);
-      // const inlinePolicy: iam.Policy = new iam.Policy(this, u + "-policy");
       const inlinePolicy: iam.Policy = new iam.Policy(this, u + "-policy", {
         document: document
       });
@@ -44,7 +39,7 @@ export class IamUserStack extends cdk.Stack {
     return user;
   }
 
-  generateInlinePolicy(username: string) {
+  generateInlinePolicyJson(username: string) {
     const userPolicyDocument = {
       "Version": "2008-10-17",
       "Statement": [
@@ -68,7 +63,7 @@ export class IamUserStack extends cdk.Stack {
     return userPolicyDocument;
   }
 
-  generateDefaultPolicy(ips: string[]) {
+  generateDefaultPolicyJson(ips: string[]) {
     const policyDocument = {
       "Version": "2012-10-17",
       "Statement": [
