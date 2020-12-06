@@ -1,0 +1,164 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot test iam is created 1`] = `
+Object {
+  "Resources": Object {
+    "MyTestStacktestgroupInlinePolicy0C2C2575": Object {
+      "Properties": Object {
+        "Groups": Array [
+          Object {
+            "Ref": "testgroupF19E2EE8",
+          },
+        ],
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "ecr:DescribeImageScanFindings",
+                "ecr:GetLifecyclePolicyPreview",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage",
+                "ecr:DescribeImages",
+                "ecr:GetAuthorizationToken",
+                "ecr:DescribeRepositories",
+                "ecr:ListTagsForResource",
+                "ecr:ListImages",
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetRepositoryPolicy",
+                "ecr:GetLifecyclePolicy",
+                "ecr-public:GetAuthorizationToken",
+                "sts:GetServiceBearerToken",
+                "ecr-public:BatchCheckLayerAvailability",
+                "ecr-public:GetRepositoryPolicy",
+                "ecr-public:DescribeRepositories",
+                "ecr-public:DescribeRegistries",
+                "ecr-public:DescribeImages",
+                "ecr-public:DescribeImageTags",
+                "ecr-public:GetRepositoryCatalogData",
+                "ecr-public:GetRegistryCatalogData",
+              ],
+              "Condition": Object {
+                "ForAnyValue:IpAddress": Object {
+                  "aws:SourceIp": Array [
+                    "0.0.0.0/0",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "VisualEditor0",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "MyTestStacktestgroupInlinePolicy0C2C2575",
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "testgroupF19E2EE8": Object {
+      "Properties": Object {
+        "GroupName": "test-group",
+      },
+      "Type": "AWS::IAM::Group",
+    },
+    "user16DC45E76": Object {
+      "Properties": Object {
+        "Groups": Array [
+          Object {
+            "Ref": "testgroupF19E2EE8",
+          },
+        ],
+        "UserName": "user1",
+      },
+      "Type": "AWS::IAM::User",
+    },
+    "user1policy68120FA3": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "ecr:CompleteLayerUpload",
+                "ecr:InitiateLayerUpload",
+                "ecr:PutImage",
+                "ecr:UploadLayerPart",
+                "ecr-public:CompleteLayerUpload",
+                "ecr-public:InitiateLayerUpload",
+                "ecr-public:PutImage",
+                "ecr-public:UploadLayerPart",
+              ],
+              "Condition": Object {
+                "ForAnyValue:IpAddress": Object {
+                  "aws:SourceIp": Array [
+                    "0.0.0.0/0",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Resource": "arn:aws:ecr:*:*:repository/user1/*",
+              "Sid": "AllowPush",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "user1policy68120FA3",
+        "Users": Array [
+          Object {
+            "Ref": "user16DC45E76",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "user2AA30D3A6": Object {
+      "Properties": Object {
+        "Groups": Array [
+          Object {
+            "Ref": "testgroupF19E2EE8",
+          },
+        ],
+        "UserName": "user2",
+      },
+      "Type": "AWS::IAM::User",
+    },
+    "user2policyDA69C02E": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "ecr:CompleteLayerUpload",
+                "ecr:InitiateLayerUpload",
+                "ecr:PutImage",
+                "ecr:UploadLayerPart",
+                "ecr-public:CompleteLayerUpload",
+                "ecr-public:InitiateLayerUpload",
+                "ecr-public:PutImage",
+                "ecr-public:UploadLayerPart",
+              ],
+              "Condition": Object {
+                "ForAnyValue:IpAddress": Object {
+                  "aws:SourceIp": Array [
+                    "0.0.0.0/0",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Resource": "arn:aws:ecr:*:*:repository/user2/*",
+              "Sid": "AllowPush",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "user2policyDA69C02E",
+        "Users": Array [
+          Object {
+            "Ref": "user2AA30D3A6",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+  },
+}
+`;
