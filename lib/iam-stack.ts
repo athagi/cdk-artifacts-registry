@@ -9,8 +9,16 @@ export interface IamUserStacksProps extends cdk.StackProps {
 
 export class IamUserStack extends cdk.Stack {
 
+  CIDR_REGEX = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/(3[0-2]|[12]?[0-9])$/
   constructor(scope: cdk.Construct, id: string, props: IamUserStacksProps) {
     super(scope, id, props);
+
+    props.strictedIps.forEach(ip => {
+      if (!this.CIDR_REGEX.test(ip)) {
+        throw new Error("invalid ips");
+      }
+    });
+    
 
     const group: iam.Group = new iam.Group(this, props.groupName, {
       groupName: props.groupName,
@@ -21,11 +29,10 @@ export class IamUserStack extends cdk.Stack {
     group.attachInlinePolicy(baseGroupInlinePolicy);
 
     const users = props.userNames; 
-    const document = iam.PolicyDocument.fromJson(this.generateInlinePolicyJson("policyDocument"));
     users.forEach(u => {
       const user: iam.User = this.createIamUser(u, group);
       const inlinePolicy: iam.Policy = new iam.Policy(this, u + "-policy", {
-        document: document
+        document: iam.PolicyDocument.fromJson(this.generateInlinePolicyJson(props.strictedIps, u))
       });
       user.attachInlinePolicy(inlinePolicy);
     });
@@ -39,7 +46,7 @@ export class IamUserStack extends cdk.Stack {
     return user;
   }
 
-  generateInlinePolicyJson(username: string) {
+  generateInlinePolicyJson(ips: string[], username: string) {
     const userPolicyDocument = {
       "Version": "2008-10-17",
       "Statement": [
@@ -56,7 +63,12 @@ export class IamUserStack extends cdk.Stack {
             "ecr-public:PutImage",
             "ecr-public:UploadLayerPart",
           ],
-          "Resource": `arn:aws:ecr:*:*:repository/${username}/*`
+          "Resource": `arn:aws:ecr:*:*:repository/${username}/*`,
+          "Condition" : {
+            "ForAnyValue:IpAddress": {
+                "aws:SourceIp": ips,
+            },
+          },
         }
       ]
     };

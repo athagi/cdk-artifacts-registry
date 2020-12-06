@@ -12,12 +12,11 @@ synth:
 
 .PHONY: test
 test:
-	npm run test
+	npm test -- --coverage
 
 .PHONY: update-test
-test:
+update-test:
 	npm test -- -u
-
 
 build:
 	npm run build

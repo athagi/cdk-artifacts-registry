@@ -10,6 +10,7 @@ const app = new cdk.App();
 // new AppStack(app, 'AppStack');
 
 const OWNER = "hogehoge";
+const Env = "master";
 
 const infra = new AppStack(app, 'CrossStackInfra');
 
@@ -19,11 +20,17 @@ const ecrStack = new RepositoriesStack(app, 'Ecr-Stack', {repoNames: repositorie
 Tags.of(ecrStack).add("Owner", OWNER);
 
 
-const iamUsers = ["user1", 'user2', 'user3'];
-const STRICTED_IPS: string[] = ["0.0.0.0/0"];
-const iamStack = new IamUserStack(app, 'IAM-Stack', {
-  userNames: iamUsers,
-  stricted_ips: STRICTED_IPS,
-});
-
+try {
+  const iamUsers = ["user1", 'user2', 'user3'];
+  const STRICTED_IPS: string[] = ["0.0.0.0/0"];
+  const groupName: string = "test-group"
+  const iamStack = new IamUserStack(app, 'IAM-Stack', {
+    userNames: iamUsers,
+    strictedIps: STRICTED_IPS,
+    groupName: groupName,
+  });
+  Tags.of(iamStack).add("Owner", OWNER);
+} catch(e) {
+  console.log(e)
+}
 app.synth()
