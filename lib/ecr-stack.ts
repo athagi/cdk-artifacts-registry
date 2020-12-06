@@ -4,7 +4,8 @@ import * as cdk from '@aws-cdk/core'
 // ecr stack
 export interface RepostiroiesStacksProps extends cdk.StackProps {
   repoNames: string[],
-  lifecycleRule: ecr.LifecycleRule
+  lifecycleRule: ecr.LifecycleRule,
+  prefix?: string
 }
 
 export class RepositoriesStack extends cdk.Stack {
@@ -18,9 +19,13 @@ export class RepositoriesStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props: RepostiroiesStacksProps) {
     super(scope, id, props);
 
-    const repositories: string[] = props.repoNames; 
+    const repositories: string[] = props.repoNames;
+    let prefix = "";
+    if (props.prefix && props.prefix.length > 0) {
+      prefix = `${props.prefix}-`
+    }
     repositories.forEach(repo => {
-      this.createRepository(repo, props.lifecycleRule);
+      this.createRepository(`${prefix}${repo}`, props.lifecycleRule);
     });
   }
 

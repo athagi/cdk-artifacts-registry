@@ -3,11 +3,11 @@
 exports[`snapshot test iam is created 1`] = `
 Object {
   "Resources": Object {
-    "MyTestStacktestgroupInlinePolicy0C2C2575": Object {
+    "MyTestStacktesttestgroupInlinePolicy21AA5C8E": Object {
       "Properties": Object {
         "Groups": Array [
           Object {
-            "Ref": "testgroupF19E2EE8",
+            "Ref": "testtestgroup35B39A5B",
           },
         ],
         "PolicyDocument": Object {
@@ -51,28 +51,28 @@ Object {
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "MyTestStacktestgroupInlinePolicy0C2C2575",
+        "PolicyName": "MyTestStacktesttestgroupInlinePolicy21AA5C8E",
       },
       "Type": "AWS::IAM::Policy",
     },
-    "testgroupF19E2EE8": Object {
+    "testtestgroup35B39A5B": Object {
       "Properties": Object {
-        "GroupName": "test-group",
+        "GroupName": "test-test-group",
       },
       "Type": "AWS::IAM::Group",
     },
-    "user16DC45E76": Object {
+    "testuser19D7501B4": Object {
       "Properties": Object {
         "Groups": Array [
           Object {
-            "Ref": "testgroupF19E2EE8",
+            "Ref": "testtestgroup35B39A5B",
           },
         ],
-        "UserName": "user1",
+        "UserName": "test-user1",
       },
       "Type": "AWS::IAM::User",
     },
-    "user1policy68120FA3": Object {
+    "testuser1policyAF1C3FE3": Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
@@ -95,33 +95,33 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Resource": "arn:aws:ecr:*:*:repository/user1/*",
+              "Resource": "arn:aws:ecr:*:*:repository/test-user1/*",
               "Sid": "AllowPush",
             },
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "user1policy68120FA3",
+        "PolicyName": "testuser1policyAF1C3FE3",
         "Users": Array [
           Object {
-            "Ref": "user16DC45E76",
+            "Ref": "testuser19D7501B4",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "user2AA30D3A6": Object {
+    "testuser23C5E23F4": Object {
       "Properties": Object {
         "Groups": Array [
           Object {
-            "Ref": "testgroupF19E2EE8",
+            "Ref": "testtestgroup35B39A5B",
           },
         ],
-        "UserName": "user2",
+        "UserName": "test-user2",
       },
       "Type": "AWS::IAM::User",
     },
-    "user2policyDA69C02E": Object {
+    "testuser2policy70FDC9F5": Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
@@ -144,16 +144,16 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Resource": "arn:aws:ecr:*:*:repository/user2/*",
+              "Resource": "arn:aws:ecr:*:*:repository/test-user2/*",
               "Sid": "AllowPush",
             },
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "user2policyDA69C02E",
+        "PolicyName": "testuser2policy70FDC9F5",
         "Users": Array [
           Object {
-            "Ref": "user2AA30D3A6",
+            "Ref": "testuser23C5E23F4",
           },
         ],
       },

@@ -5,14 +5,16 @@ import * as Iam from '../lib/iam-stack';
 describe('snapshot test', () => {
   it("iam is created", () => {
     const app = new cdk.App();
-    // WHEN
     const userNames = ["user1", "user2"]
     const groupName = "test-group";
+    const prefix = 'test';
     const stack = new Iam.IamUserStack(app, 'MyTestStack',  {
       userNames: userNames, 
       strictedIps: ["0.0.0.0/0"],
-      groupName: groupName,});
-    // THEN
+      groupName: groupName,
+      prefix: prefix,
+    });
+
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
   })
 })
@@ -20,14 +22,38 @@ describe('snapshot test', () => {
 describe('fine grained tests', () => {
   it('User Created', () => {
     const app = new cdk.App();
-    // WHEN
     const userNames = ["user1", "user2"]
     const groupName = "test-group";
+    const prefix = 'test';
     const stack = new Iam.IamUserStack(app, 'MyTestStack',  {
       userNames: userNames, 
       strictedIps: ["0.0.0.0/0"],
-      groupName: groupName,});
-    // THEN
+      groupName: groupName,
+      prefix: prefix,
+    });
+
+    userNames.forEach(user => {
+      expectCDK(stack).to(haveResource("AWS::IAM::User", {
+        UserName: `${prefix}-${user}`,
+        Groups: [{
+          Ref: "testtestgroup35B39A5B",
+        }]
+      }));
+    });
+  });
+
+  it('User Created without prefix', () => {
+    const app = new cdk.App();
+    const userNames = ["user1", "user2"]
+    const groupName = "test-group";
+    const prefix = '';
+    const stack = new Iam.IamUserStack(app, 'MyTestStack',  {
+      userNames: userNames, 
+      strictedIps: ["0.0.0.0/0"],
+      groupName: groupName,
+      prefix: prefix,
+    });
+    
     userNames.forEach(user => {
       expectCDK(stack).to(haveResource("AWS::IAM::User", {
         UserName: user,
@@ -41,11 +67,30 @@ describe('fine grained tests', () => {
   it('Group Created', () => {
     const app = new cdk.App();
     const userNames = ["user1"];
+    const prefix = 'test';
     const groupName = "test-group";
     const stack = new Iam.IamUserStack(app, 'MyTestStack',  {
       userNames: userNames, 
       strictedIps: ["0.0.0.0/0"],
-      groupName: groupName,});
+      groupName: groupName,
+      prefix: prefix,
+    });
+    expectCDK(stack).to(haveResource("AWS::IAM::Group", {
+      "GroupName": `${prefix}-${groupName}`,
+    }));
+  });
+
+  it('Group Created without prefix', () => {
+    const app = new cdk.App();
+    const userNames = ["user1"];
+    const prefix = '';
+    const groupName = "test-group";
+    const stack = new Iam.IamUserStack(app, 'MyTestStack',  {
+      userNames: userNames, 
+      strictedIps: ["0.0.0.0/0"],
+      groupName: groupName,
+      prefix: prefix,
+    });
     expectCDK(stack).to(haveResource("AWS::IAM::Group", {
       "GroupName": groupName,
     }));
@@ -55,17 +100,19 @@ describe('fine grained tests', () => {
 describe('validation tests', () => {
   it('pass valid ip', () => {
     const app = new cdk.App();
-    // WHEN
     const userNames = ["user1", "user2"]
     const groupName = "test-group";
+    const prefix = 'test';
     const stack = new Iam.IamUserStack(app, 'MyTestStack',  {
       userNames: userNames, 
       strictedIps: ["0.0.0.0/0"],
-      groupName: groupName,});
-    // THEN
+      groupName: groupName,
+      prefix: prefix,
+    });
+    
     userNames.forEach(user => {
       expectCDK(stack).to(haveResource("AWS::IAM::User", {
-        UserName: user,
+        UserName: `${prefix}-${user}`,
       }));
     });
   });

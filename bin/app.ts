@@ -5,6 +5,8 @@ import { RepositoriesStack } from '../lib/ecr-stack';
 import { IamUserStack } from '../lib/iam-stack';
 import { Tags } from '@aws-cdk/core';
 import * as dotenv from 'dotenv';
+import * as process from 'process';
+import * as fs from 'fs';
 
 function getProps() {
   dotenv.config(); 
@@ -33,12 +35,9 @@ function getProps() {
     process.exit(1);
   }
   const strictedIps = process.env.STRICTED_IPS?.replace(/\"/g, '').split(',');
-  console.log(strictedIps);
-  
-  const repositories: string[] = ["hoge/aaaa", "hoge/bbbb", "fuga/aaa", "foo"];
   const groupName: string = owner + "-group"
-  const iamUsers = ["user1", 'user2', 'user3'];
-  
+  const repositories: string[] = readFile('./lib/files/repositories.txt');
+  const iamUsers = readFile('./lib/files/users.txt');;
   const iamStackName = stackNamePrefix + "-" + env + "-" + "IAM-Stack";
   const ecrStackName = stackNamePrefix + "-" + env + "-" + "Ecr-Stack";
 
@@ -55,13 +54,35 @@ function getProps() {
   }
 }
 
+function readFile(path: string): string[]{
+  if (fs.existsSync(path)) {
+    const res: string = fs.readFileSync(path, "utf-8");
+    return res.split('\n').filter(s => s);
+  }else {
+    return []
+  }
+}
 
 function main() {
+  let props;
+  try {
+    props = getProps();
+    console.log(`props: ${props}`);
+  } catch {
+    console.log("read props error");
+    process.exit(1);
+  }
+  let prefix = props.env;
+  if(prefix === "master" || prefix === "production") {
+    prefix = "";
+  }
 
-  const props = getProps();
   const app = new cdk.App();
 
-  const ecrStack = new RepositoriesStack(app, props.ecrStackName, {repoNames: props.repositories, lifecycleRule: RepositoriesStack.LIFECYCLERULE});  
+  const ecrStack = new RepositoriesStack(app, props.ecrStackName, {
+    repoNames: props.repositories,
+    lifecycleRule: RepositoriesStack.LIFECYCLERULE,
+    prefix: prefix});  
   Tags.of(ecrStack).add("Owner", props.owner);
   
   try {
@@ -69,6 +90,7 @@ function main() {
       userNames: props.iamUsers,
       strictedIps: props.strictedIps,
       groupName: props.groupName,
+      prefix: prefix,
     });
     Tags.of(iamStack).add("Owner", props.owner);
   } catch(e) {

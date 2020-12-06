@@ -2,17 +2,24 @@ import { expect as expectCDK, matchTemplate, MatchStyle, haveResource, countReso
 import * as cdk from '@aws-cdk/core';
 import * as Ecr from '../lib/ecr-stack';
 
-
 describe('fine grained tests', () => {
   it('ECR projects Created', () => {
     const app = new cdk.App();
     // WHEN
-    const repoNames = ["testrepo1", "testrepo2", "testrepo3", "testrepo4"]
-    const stack = new Ecr.RepositoriesStack(app, 'MyTestStack', {repoNames: repoNames, lifecycleRule: Ecr.RepositoriesStack.LIFECYCLERULE});
+    const repoNames = ["testrepo1", "testrepo2", "testrepo3", "testrepo4"];
+    const prefix = 'test';
+    const stack = new Ecr.RepositoriesStack(
+      app, 
+      'MyTestStack', 
+      {
+        repoNames: repoNames, 
+        lifecycleRule: Ecr.RepositoriesStack.LIFECYCLERULE,
+        prefix: prefix
+      });
     // THEN
     repoNames.forEach(repo => {
       expectCDK(stack).to(haveResource("AWS::ECR::Repository", {
-        RepositoryName: repo
+        RepositoryName: `${prefix}-${repo}`
       }));
     });
   });
@@ -22,7 +29,15 @@ describe('fine grained tests', () => {
     const app = new cdk.App();
     // WHEN
     const repoNames = ["testrepo1", "testrepo2", "testrepo3", "testrepo4"]
-    const stack = new Ecr.RepositoriesStack(app, 'MyTestStack', {repoNames: repoNames, lifecycleRule: Ecr.RepositoriesStack.LIFECYCLERULE});
+    const prefix = '';
+    const stack = new Ecr.RepositoriesStack(
+      app, 
+      'MyTestStack', 
+      {
+        repoNames: repoNames,
+        lifecycleRule: Ecr.RepositoriesStack.LIFECYCLERULE,
+        prefix: prefix,
+      });
     // THEN
     expectCDK(stack).to(countResources("AWS::ECR::Repository", repoNames.length))
   });
@@ -35,7 +50,32 @@ describe('snapshot test', () => {
     const app = new cdk.App();
     // WHEN
     const repoNames = ["testrepo1", "testrepo2", "testrepo3", "testrepo4"]
-    const stack = new Ecr.RepositoriesStack(app, 'MyTestStack', {repoNames: repoNames, lifecycleRule: Ecr.RepositoriesStack.LIFECYCLERULE});
+    const prefix = "develop";
+    const stack = new Ecr.RepositoriesStack(
+      app,
+      'MyTestStack',
+      {
+        repoNames: repoNames,
+        lifecycleRule: Ecr.RepositoriesStack.LIFECYCLERULE,
+        prefix: prefix,
+      });
+    // THEN
+    expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+  })
+
+  it("repository is created", () => {
+    const app = new cdk.App();
+    // WHEN
+    const repoNames = ["testrepo1", "testrepo2", "testrepo3", "testrepo4"]
+    const prefix = "";
+    const stack = new Ecr.RepositoriesStack(
+      app,
+      'MyTestStack',
+      {
+        repoNames: repoNames,
+        lifecycleRule: Ecr.RepositoriesStack.LIFECYCLERULE,
+        prefix: prefix,
+      });
     // THEN
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
   })
@@ -60,8 +100,12 @@ describe('Validation tests', () => {
         },
       }]
     });
-
-    const stack = new Ecr.RepositoriesStack(app, 'MyTestStack', {repoNames: repoNames, lifecycleRule: Ecr.RepositoriesStack.LIFECYCLERULE});
+    const prefix = "";
+    const stack = new Ecr.RepositoriesStack(app, 'MyTestStack', {
+      repoNames: repoNames,
+      lifecycleRule: Ecr.RepositoriesStack.LIFECYCLERULE,
+      prefix: prefix,
+    });
     // THEN
     repoNames.forEach(repo => {
       expectCDK(stack).to(haveResource("AWS::ECR::Repository", {

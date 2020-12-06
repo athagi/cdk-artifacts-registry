@@ -5,6 +5,7 @@ export interface IamUserStacksProps extends cdk.StackProps {
   userNames: string[],
   strictedIps: string[],
   groupName: string,
+  prefix?: string,
 }
 
 export class IamUserStack extends cdk.Stack {
@@ -18,10 +19,15 @@ export class IamUserStack extends cdk.Stack {
         throw new Error("invalid ips");
       }
     });
+
+    let prefix = "";
+    if (props.prefix && props.prefix.length > 0) {
+      prefix = `${props.prefix}-`;
+    } 
     
 
-    const group: iam.Group = new iam.Group(this, props.groupName, {
-      groupName: props.groupName,
+    const group: iam.Group = new iam.Group(this, `${prefix}${props.groupName}`, {
+      groupName: `${prefix}${props.groupName}`,
     });
     const baseGroupInlinePolicy: iam.Policy = new iam.Policy(this, group + "InlinePolicy", {
       document: iam.PolicyDocument.fromJson(this.generateDefaultPolicyJson(props.strictedIps))
@@ -30,9 +36,10 @@ export class IamUserStack extends cdk.Stack {
 
     const users = props.userNames; 
     users.forEach(u => {
-      const user: iam.User = this.createIamUser(u, group);
-      const inlinePolicy: iam.Policy = new iam.Policy(this, u + "-policy", {
-        document: iam.PolicyDocument.fromJson(this.generateInlinePolicyJson(props.strictedIps, u))
+      const userName = `${prefix}${u}`;
+      const user: iam.User = this.createIamUser(userName, group);
+      const inlinePolicy: iam.Policy = new iam.Policy(this, userName + "-policy", {
+        document: iam.PolicyDocument.fromJson(this.generateInlinePolicyJson(props.strictedIps, userName))
       });
       user.attachInlinePolicy(inlinePolicy);
     });

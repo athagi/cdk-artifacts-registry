@@ -3,6 +3,69 @@
 exports[`snapshot test repository is created 1`] = `
 Object {
   "Resources": Object {
+    "developtestrepo1152856C2": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "ImageScanningConfiguration": Object {
+          "scanOnPush": true,
+        },
+        "LifecyclePolicy": Object {
+          "LifecyclePolicyText": "{\\"rules\\":[{\\"rulePriority\\":1,\\"selection\\":{\\"tagStatus\\":\\"any\\",\\"countType\\":\\"imageCountMoreThan\\",\\"countNumber\\":10},\\"action\\":{\\"type\\":\\"expire\\"}}]}",
+        },
+        "RepositoryName": "develop-testrepo1",
+      },
+      "Type": "AWS::ECR::Repository",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "developtestrepo272F0705A": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "ImageScanningConfiguration": Object {
+          "scanOnPush": true,
+        },
+        "LifecyclePolicy": Object {
+          "LifecyclePolicyText": "{\\"rules\\":[{\\"rulePriority\\":1,\\"selection\\":{\\"tagStatus\\":\\"any\\",\\"countType\\":\\"imageCountMoreThan\\",\\"countNumber\\":10},\\"action\\":{\\"type\\":\\"expire\\"}}]}",
+        },
+        "RepositoryName": "develop-testrepo2",
+      },
+      "Type": "AWS::ECR::Repository",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "developtestrepo3DC9F216C": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "ImageScanningConfiguration": Object {
+          "scanOnPush": true,
+        },
+        "LifecyclePolicy": Object {
+          "LifecyclePolicyText": "{\\"rules\\":[{\\"rulePriority\\":1,\\"selection\\":{\\"tagStatus\\":\\"any\\",\\"countType\\":\\"imageCountMoreThan\\",\\"countNumber\\":10},\\"action\\":{\\"type\\":\\"expire\\"}}]}",
+        },
+        "RepositoryName": "develop-testrepo3",
+      },
+      "Type": "AWS::ECR::Repository",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "developtestrepo46EE393FB": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "ImageScanningConfiguration": Object {
+          "scanOnPush": true,
+        },
+        "LifecyclePolicy": Object {
+          "LifecyclePolicyText": "{\\"rules\\":[{\\"rulePriority\\":1,\\"selection\\":{\\"tagStatus\\":\\"any\\",\\"countType\\":\\"imageCountMoreThan\\",\\"countNumber\\":10},\\"action\\":{\\"type\\":\\"expire\\"}}]}",
+        },
+        "RepositoryName": "develop-testrepo4",
+      },
+      "Type": "AWS::ECR::Repository",
+      "UpdateReplacePolicy": "Delete",
+    },
+  },
+}
+`;
+
+exports[`snapshot test repository is created 2`] = `
+Object {
+  "Resources": Object {
     "testrepo1698DDA31": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
