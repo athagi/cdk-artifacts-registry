@@ -36,8 +36,8 @@ function getProps() {
   }
   const strictedIps = process.env.STRICTED_IPS?.replace(/\"/g, '').split(',');
   const groupName: string = owner + "-group"
-  const repositories: string[] = readFile('./lib/files/repositories.txt');
-  const iamUsers = readFile('./lib/files/users.txt');;
+  const repositories: string[] = readFile('./bin/files/repositories.txt');
+  const iamUsers = readFile('./bin/files/users.txt');;
   const iamStackName = stackNamePrefix + "-" + env + "-" + "IAM-Stack";
   const ecrStackName = stackNamePrefix + "-" + env + "-" + "Ecr-Stack";
 
