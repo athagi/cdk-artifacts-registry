@@ -21,9 +21,9 @@ export class RepositoriesStack extends cdk.Stack {
 
     const repositories: string[] = props.repoNames;
     let prefix = "";
-    if (props.prefix && props.prefix.length > 0) {
-      prefix = `${props.prefix}-`
-    }
+    if (props.prefix && props.prefix.length > 0 && !props.prefix.match(/(master|prod|production)/)) {
+      prefix = `${props.prefix}-`;
+    } 
     repositories.forEach(repo => {
       this.createRepository(`${prefix}${repo}`, props.lifecycleRule);
     });

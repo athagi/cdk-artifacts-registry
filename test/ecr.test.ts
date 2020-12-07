@@ -23,7 +23,46 @@ describe('fine grained tests', () => {
       }));
     });
   });
+
+  it('ECR projects Created without prefix', () => {
+    const app = new cdk.App();
+    // WHEN
+    const repoNames = ["testrepo1", "testrepo2", "testrepo3", "testrepo4"];
+    const stack = new Ecr.RepositoriesStack(
+      app, 
+      'MyTestStack', 
+      {
+        repoNames: repoNames, 
+        lifecycleRule: Ecr.RepositoriesStack.LIFECYCLERULE,
+      });
+    // THEN
+    repoNames.forEach(repo => {
+      expectCDK(stack).to(haveResource("AWS::ECR::Repository", {
+        RepositoryName: `${repo}`
+      }));
+    });
+  });
   
+  it('ECR projects Created with master', () => {
+    const app = new cdk.App();
+    // WHEN
+    const repoNames = ["testrepo1", "testrepo2", "testrepo3", "testrepo4"];
+    const prefix = 'master';
+    const stack = new Ecr.RepositoriesStack(
+      app, 
+      'MyTestStack', 
+      {
+        repoNames: repoNames, 
+        lifecycleRule: Ecr.RepositoriesStack.LIFECYCLERULE,
+        prefix: prefix
+      });
+    // THEN
+    repoNames.forEach(repo => {
+      expectCDK(stack).to(haveResource("AWS::ECR::Repository", {
+        RepositoryName: `${repo}`
+      }));
+    });
+  });
   
   it('ECR repository count', () => {
     const app = new cdk.App();

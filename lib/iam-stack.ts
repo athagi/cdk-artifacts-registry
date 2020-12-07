@@ -21,10 +21,9 @@ export class IamUserStack extends cdk.Stack {
     });
 
     let prefix = "";
-    if (props.prefix && props.prefix.length > 0) {
+    if (props.prefix && props.prefix.length > 0 && !props.prefix.match(/(master|prod|production)/)) {
       prefix = `${props.prefix}-`;
     } 
-    
 
     const group: iam.Group = new iam.Group(this, `${prefix}${props.groupName}`, {
       groupName: `${prefix}${props.groupName}`,
