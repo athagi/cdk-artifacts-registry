@@ -67,7 +67,6 @@ function main() {
   let props;
   try {
     props = getProps();
-    console.log(`props: ${props}`);
   } catch {
     console.log("read props error");
     process.exit(1);
