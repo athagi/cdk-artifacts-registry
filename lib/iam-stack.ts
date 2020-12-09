@@ -29,10 +29,6 @@ interface sourceIpType {
   "aws:SourceIp": string[];
 }
 
-/**
- * IamUser stack props
- * @param {IamUserStacksProps} used by constructor
- */
 export class IamUserStack extends cdk.Stack {
   private CIDR_REGEX = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/(3[0-2]|[12]?[0-9])$/;
 

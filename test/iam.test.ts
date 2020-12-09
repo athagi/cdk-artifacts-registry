@@ -73,7 +73,7 @@ describe("fine grained tests", () => {
                 "ecr-public:UploadLayerPart",
               ],
               Condition: {
-                "ForAnyValue:IpAddress": {
+                IpAddress: {
                   "aws:SourceIp": ["0.0.0.0/0", "192.168.0.0/16"],
                 },
               },
