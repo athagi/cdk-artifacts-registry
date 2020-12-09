@@ -38,7 +38,7 @@ Object {
                 "ecr-public:GetRegistryCatalogData",
               ],
               "Condition": Object {
-                "ForAnyValue:IpAddress": Object {
+                "IpAddress": Object {
                   "aws:SourceIp": Array [
                     "0.0.0.0/0",
                   ],
@@ -88,7 +88,7 @@ Object {
                 "ecr-public:UploadLayerPart",
               ],
               "Condition": Object {
-                "ForAnyValue:IpAddress": Object {
+                "IpAddress": Object {
                   "aws:SourceIp": Array [
                     "0.0.0.0/0",
                   ],
@@ -137,7 +137,7 @@ Object {
                 "ecr-public:UploadLayerPart",
               ],
               "Condition": Object {
-                "ForAnyValue:IpAddress": Object {
+                "IpAddress": Object {
                   "aws:SourceIp": Array [
                     "0.0.0.0/0",
                   ],
