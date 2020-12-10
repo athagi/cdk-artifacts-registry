@@ -76,7 +76,7 @@ jobs:
     name: delete cdk stacks
     runs-on: ubuntu-latest
 
-    jobs:
+    steps:
       - name: delete
         runs-on: ubuntu-latest
         if: github.event.pull_request.merged == true
