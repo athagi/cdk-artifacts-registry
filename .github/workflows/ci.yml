@@ -1,5 +1,5 @@
 name: Deploy
-on: 
+on:
   push:
   pull_request:
     branches:
@@ -27,6 +27,7 @@ jobs:
     name: deploy cdk stacks
     runs-on: ubuntu-latest
 
+    steps:
       - name: Branch name
         run: echo running on branch ${GITHUB_REF##*/}
 
@@ -81,4 +82,3 @@ jobs:
         if: github.event.pull_request.merged == true
         uses: youyo/aws-cdk-github-actions@v1
         run: "echo ${{ steps.extract_branch.outputs.branch }}"
-
