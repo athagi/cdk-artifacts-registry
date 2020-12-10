@@ -78,7 +78,6 @@ jobs:
 
     steps:
       - name: delete
-        runs-on: ubuntu-latest
         if: github.event.pull_request.merged == true
         # uses: youyo/aws-cdk-github-actions@v1
         run: "echo ${{ steps.extract_branch.outputs.branch }}"
