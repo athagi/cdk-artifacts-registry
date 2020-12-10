@@ -28,7 +28,7 @@ export class RepositoriesStack extends cdk.Stack {
     if (
       props.prefix &&
       props.prefix.length > 0 &&
-      !props.prefix.match(/(master|prod|production)/)
+      !props.prefix.match(/(master|prod|production|main)/)
     ) {
       prefix = `${props.prefix}-`;
     }

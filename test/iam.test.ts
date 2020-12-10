@@ -140,6 +140,32 @@ describe("fine grained tests", () => {
     });
   });
 
+  it("User Created with main", () => {
+    const app = new cdk.App();
+    const userNames = ["user1", "user2"];
+    const groupName = "test-group";
+    const prefix = "main";
+    const stack = new Iam.IamUserStack(app, "MyTestStack", {
+      userNames: userNames,
+      strictedIps: ["0.0.0.0/0"],
+      groupName: groupName,
+      prefix: prefix,
+    });
+
+    userNames.forEach((user) => {
+      expectCDK(stack).to(
+        haveResource("AWS::IAM::User", {
+          UserName: user,
+          Groups: [
+            {
+              Ref: "testgroupF19E2EE8",
+            },
+          ],
+        })
+      );
+    });
+  });
+
   it("User Created without prefix", () => {
     const app = new cdk.App();
     const userNames = ["user1", "user2"];
