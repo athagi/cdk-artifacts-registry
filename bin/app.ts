@@ -35,6 +35,32 @@ function getProps() {
     process.exit(1);
   }
   const strictedIps = process.env.STRICTED_IPS?.replace(/\"/g, "").split(",");
+  if (typeof process.env.DELETION_POLICY == "undefined") {
+    console.error('Error: "DELETION_POLICY" is not set.');
+    console.error("Please consider adding a .env file with DELETION_POLICY.");
+    process.exit(1);
+  }
+  const deletionPolicyStr = process.env.DELETION_POLICY;
+  if (
+    deletionPolicyStr != cdk.RemovalPolicy.DESTROY.toString() &&
+    deletionPolicyStr != cdk.RemovalPolicy.RETAIN.toString() &&
+    deletionPolicyStr != cdk.RemovalPolicy.SNAPSHOT.toString()
+  ) {
+    console.error('Error: "DELETION_POLICY" is invalid.');
+    console.error("Please set valid value in .env file with DELETION_POLICY.");
+    process.exit(1);
+  }
+
+  let deletionPolicy = cdk.RemovalPolicy.DESTROY;
+  switch (deletionPolicyStr) {
+    case cdk.RemovalPolicy.RETAIN.toString():
+      deletionPolicy = cdk.RemovalPolicy.RETAIN;
+      break;
+    case cdk.RemovalPolicy.SNAPSHOT.toString():
+      deletionPolicy = cdk.RemovalPolicy.SNAPSHOT;
+      break;
+  }
+
   const groupName: string = owner + "-group";
   const repositories: string[] = readFile("./bin/files/repositories.txt");
   const iamUsers = readFile("./bin/files/users.txt");
@@ -51,6 +77,7 @@ function getProps() {
     iamUsers: iamUsers,
     iamStackName: iamStackName,
     ecrStackName: ecrStackName,
+    deletionPolicy: deletionPolicy,
   };
 }
 
@@ -82,6 +109,7 @@ function main() {
     repoNames: props.repositories,
     lifecycleRule: RepositoriesStack.LIFECYCLERULE,
     prefix: prefix,
+    removalPolicy: props.deletionPolicy,
   });
   Tags.of(ecrStack).add("Owner", props.owner);
 
