@@ -6,6 +6,7 @@ export interface RepostiroiesStacksProps extends cdk.StackProps {
   repoNames: string[];
   lifecycleRule: ecr.LifecycleRule;
   prefix?: string;
+  removalPolicy?: cdk.RemovalPolicy;
 }
 
 export class RepositoriesStack extends cdk.Stack {
@@ -32,19 +33,23 @@ export class RepositoriesStack extends cdk.Stack {
     ) {
       prefix = `${props.prefix}-`;
     }
+    if (!props.removalPolicy) {
+      props.removalPolicy = cdk.RemovalPolicy.DESTROY;
+    }
     repositories.forEach((repo) => {
-      this.createRepository(`${prefix}${repo}`, props.lifecycleRule);
+      this.createRepository(`${prefix}${repo}`, props);
     });
   }
 
   createRepository(
     repoName: string,
-    lifecycleRule: ecr.LifecycleRule
+    props: RepostiroiesStacksProps
   ): ecr.Repository {
+    const lifecycleRule: ecr.LifecycleRule = props.lifecycleRule;
     const repository = new ecr.Repository(this, repoName, {
       imageScanOnPush: true,
       repositoryName: repoName,
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      removalPolicy: props.removalPolicy,
     });
     repository.addLifecycleRule(lifecycleRule);
     return repository;

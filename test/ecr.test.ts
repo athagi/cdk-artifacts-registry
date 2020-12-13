@@ -3,6 +3,7 @@ import {
   haveResource,
   countResources,
   SynthUtils,
+  ResourcePart,
 } from "@aws-cdk/assert";
 import * as cdk from "@aws-cdk/core";
 import * as Ecr from "../lib/ecr-stack";
@@ -100,6 +101,56 @@ describe("fine grained tests", () => {
     expectCDK(stack).to(
       countResources("AWS::ECR::Repository", repoNames.length)
     );
+  });
+
+  it("Valid delition policy", () => {
+    const app = new cdk.App();
+    const repoNames = ["testrepo1", "testrepo2", "testrepo3", "testrepo4"];
+    const prefix = "";
+    const deletionPolicy = cdk.RemovalPolicy.RETAIN;
+
+    const stack = new Ecr.RepositoriesStack(app, "MyTestStack", {
+      repoNames: repoNames,
+      lifecycleRule: Ecr.RepositoriesStack.LIFECYCLERULE,
+      prefix: prefix,
+      removalPolicy: deletionPolicy,
+    });
+
+    repoNames.forEach(() => {
+      expectCDK(stack).to(
+        haveResource(
+          "AWS::ECR::Repository",
+          {
+            DeletionPolicy: `${cdk.CfnDeletionPolicy.RETAIN}`,
+          },
+          ResourcePart.CompleteDefinition
+        )
+      );
+    });
+  });
+
+  it("Default Valid delition policy", () => {
+    const app = new cdk.App();
+    // WHEN
+    const repoNames = ["testrepo1", "testrepo2", "testrepo3", "testrepo4"];
+    const prefix = "";
+    const stack = new Ecr.RepositoriesStack(app, "MyTestStack", {
+      repoNames: repoNames,
+      lifecycleRule: Ecr.RepositoriesStack.LIFECYCLERULE,
+      prefix: prefix,
+    });
+
+    repoNames.forEach(() => {
+      expectCDK(stack).to(
+        haveResource(
+          "AWS::ECR::Repository",
+          {
+            DeletionPolicy: `${cdk.CfnDeletionPolicy.DELETE}`,
+          },
+          ResourcePart.CompleteDefinition
+        )
+      );
+    });
   });
 });
 
