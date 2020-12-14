@@ -97,14 +97,13 @@ jobs:
     # needs: [deploy]
     name: delete cdk stacks
     runs-on: ubuntu-latest
-
+    if: github.event.pull_request.merged == true
     steps:
       - name: Extract branch name
         shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
       - name: delete
-        if: github.event.pull_request.merged == true
         # uses: youyo/aws-cdk-github-actions@v1
         shell: bash
         run: "echo ${{ steps.extract_branch.outputs.branch }}"
