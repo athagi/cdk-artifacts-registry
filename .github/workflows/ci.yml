@@ -92,3 +92,19 @@ jobs:
         id: extract_branch
       - name: Hello World
         run: "echo ${{ steps.extract_branch.outputs.branch }}"
+
+  delete-resources:
+    # needs: [deploy]
+    name: delete cdk stacks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: delete
+        if: github.event.pull_request.merged == true
+        # uses: youyo/aws-cdk-github-actions@v1
+        shell: bash
+        run: "echo ${{ steps.extract_branch.outputs.branch }}"
