@@ -85,8 +85,6 @@ jobs:
         run: "echo ${{ steps.extract_branch.outputs.branch }}"
       - name: delete
         uses: youyo/aws-cdk-github-actions@v1
-        shell: bash
-        run: "echo ${{ steps.extract_branch.outputs.branch }}"
         with:
           cdk_subcommand: "destroy"
           actions_comment: false
