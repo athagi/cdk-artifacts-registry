@@ -70,9 +70,7 @@ jobs:
     name: diff cdk stacks with main
     runs-on: ubuntu-latest
     steps:
-      - run: |
-        echo ${{github.base_ref}}
-        echo ${{github.head_ref}}
+      - run: echo ${{github.base_ref}} && echo ${{github.head_ref}}
       - name: cdk diff
         uses: youyo/aws-cdk-github-actions@v1
         with:
@@ -89,9 +87,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true
     steps:
-      - run: |
-        echo ${{github.base_ref}}
-        echo ${{github.head_ref}}
+      - run: echo ${{github.base_ref}} && echo ${{github.head_ref}}
       - name: delete
         uses: youyo/aws-cdk-github-actions@v1
         with:
