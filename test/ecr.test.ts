@@ -7,7 +7,6 @@ import {
 } from "@aws-cdk/assert";
 import * as cdk from "@aws-cdk/core";
 import * as Ecr from "../lib/ecr-stack";
-
 describe("fine grained tests", () => {
   it("ECR projects Created", () => {
     const app = new cdk.App();
@@ -28,7 +27,6 @@ describe("fine grained tests", () => {
       );
     });
   });
-
   it("ECR projects Created without prefix", () => {
     const app = new cdk.App();
     // WHEN
@@ -46,7 +44,6 @@ describe("fine grained tests", () => {
       );
     });
   });
-
   it("ECR projects Created with master", () => {
     const app = new cdk.App();
     // WHEN
@@ -66,7 +63,6 @@ describe("fine grained tests", () => {
       );
     });
   });
-
   it("ECR projects Created with main", () => {
     const app = new cdk.App();
     // WHEN
@@ -86,7 +82,6 @@ describe("fine grained tests", () => {
       );
     });
   });
-
   it("ECR repository count", () => {
     const app = new cdk.App();
     // WHEN
@@ -102,20 +97,17 @@ describe("fine grained tests", () => {
       countResources("AWS::ECR::Repository", repoNames.length)
     );
   });
-
   it("Valid delition policy", () => {
     const app = new cdk.App();
     const repoNames = ["testrepo1", "testrepo2", "testrepo3", "testrepo4"];
     const prefix = "";
     const deletionPolicy = cdk.RemovalPolicy.RETAIN;
-
     const stack = new Ecr.RepositoriesStack(app, "MyTestStack", {
       repoNames: repoNames,
       lifecycleRule: Ecr.RepositoriesStack.LIFECYCLERULE,
       prefix: prefix,
       removalPolicy: deletionPolicy,
     });
-
     repoNames.forEach(() => {
       expectCDK(stack).to(
         haveResource(
@@ -128,7 +120,6 @@ describe("fine grained tests", () => {
       );
     });
   });
-
   it("Default Valid delition policy", () => {
     const app = new cdk.App();
     // WHEN
@@ -139,7 +130,6 @@ describe("fine grained tests", () => {
       lifecycleRule: Ecr.RepositoriesStack.LIFECYCLERULE,
       prefix: prefix,
     });
-
     repoNames.forEach(() => {
       expectCDK(stack).to(
         haveResource(
@@ -153,7 +143,6 @@ describe("fine grained tests", () => {
     });
   });
 });
-
 describe("snapshot test", () => {
   it("repository is created", () => {
     const app = new cdk.App();
@@ -168,7 +157,6 @@ describe("snapshot test", () => {
     // THEN
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
   });
-
   it("repository is created", () => {
     const app = new cdk.App();
     // WHEN
@@ -183,7 +171,6 @@ describe("snapshot test", () => {
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
   });
 });
-
 describe("Validation tests", () => {
   // todo うまい書き方がわからない
   it("Validate ecr lifecycle rule", () => {

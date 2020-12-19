@@ -1,6 +1,5 @@
 import * as ecr from "@aws-cdk/aws-ecr";
 import * as cdk from "@aws-cdk/core";
-
 // ecr stack
 export interface RepostiroiesStacksProps extends cdk.StackProps {
   repoNames: string[];
@@ -8,7 +7,6 @@ export interface RepostiroiesStacksProps extends cdk.StackProps {
   prefix?: string;
   removalPolicy?: cdk.RemovalPolicy;
 }
-
 export class RepositoriesStack extends cdk.Stack {
   public readonly repository: ecr.Repository;
   static LIFECYCLERULE: ecr.LifecycleRule = {
@@ -16,14 +14,12 @@ export class RepositoriesStack extends cdk.Stack {
     rulePriority: 1,
     tagStatus: ecr.TagStatus.ANY,
   };
-
   constructor(
     scope: cdk.Construct,
     id: string,
     props: RepostiroiesStacksProps
   ) {
     super(scope, id, props);
-
     const repositories: string[] = props.repoNames;
     let prefix = "";
     if (
@@ -40,7 +36,6 @@ export class RepositoriesStack extends cdk.Stack {
       this.createRepository(`${prefix}${repo}`, props);
     });
   }
-
   createRepository(
     repoName: string,
     props: RepostiroiesStacksProps
