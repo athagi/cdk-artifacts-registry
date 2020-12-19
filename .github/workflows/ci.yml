@@ -102,6 +102,7 @@ jobs:
   deploy:
     name: deploy cdk stacks
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: Branch name
         run: echo running on branch ${GITHUB_REF##*/}
