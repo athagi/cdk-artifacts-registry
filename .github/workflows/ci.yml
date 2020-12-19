@@ -69,6 +69,16 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "ap-northeast-1"
+      - name: cdk diff with master
+        uses: youyo/aws-cdk-github-actions@v1
+        with:
+          cdk_subcommand: "diff"
+          actions_comment: false
+        env:
+          ENV: main
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "ap-northeast-1"
 
   delete-resources:
     needs: [deploy]
