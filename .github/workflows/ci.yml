@@ -109,9 +109,7 @@ jobs:
         shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
-      - run: |
-        echo ${{github.base_ref}}
-        echo ${{github.head_ref}}
+      - run: echo ${{github.base_ref}} && echo ${{github.head_ref}}
       - name: cdk diff
         uses: youyo/aws-cdk-github-actions@v1
         with:
