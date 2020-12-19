@@ -1,7 +1,6 @@
 import { expect as expectCDK, haveResource, SynthUtils } from "@aws-cdk/assert";
 import * as cdk from "@aws-cdk/core";
 import * as Iam from "../lib/iam-stack";
-
 describe("snapshot test", () => {
   it("iam is created", () => {
     const app = new cdk.App();
@@ -10,14 +9,13 @@ describe("snapshot test", () => {
     const prefix = "test";
     const stack = new Iam.IamUserStack(app, "MyTestStack", {
       userNames: userNames,
-      strictedIps: ["0.0.0.0/0"],
+      strictedCidrs: ["0.0.0.0/0"],
       groupName: groupName,
       prefix: prefix,
     });
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
   });
 });
-
 describe("fine grained tests", () => {
   it("User Created and assigned to created group", () => {
     const app = new cdk.App();
@@ -26,11 +24,10 @@ describe("fine grained tests", () => {
     const prefix = "test";
     const stack = new Iam.IamUserStack(app, "MyTestStack", {
       userNames: userNames,
-      strictedIps: ["0.0.0.0/0"],
+      strictedCidrs: ["0.0.0.0/0"],
       groupName: groupName,
       prefix: prefix,
     });
-
     userNames.forEach((user) => {
       expectCDK(stack).to(
         haveResource("AWS::IAM::User", {
@@ -44,7 +41,6 @@ describe("fine grained tests", () => {
       );
     });
   });
-
   it("Policy Created with multiple stricted ips", () => {
     const app = new cdk.App();
     const userNames = ["user1", "user2"];
@@ -52,11 +48,10 @@ describe("fine grained tests", () => {
     const prefix = "test";
     const stack = new Iam.IamUserStack(app, "MyTestStack", {
       userNames: userNames,
-      strictedIps: ["0.0.0.0/0", "192.168.0.0/16"],
+      strictedCidrs: ["0.0.0.0/0", "192.168.0.0/16"],
       groupName: groupName,
       prefix: prefix,
     });
-
     expectCDK(stack).to(
       haveResource("AWS::IAM::Policy", {
         PolicyDocument: {
@@ -87,7 +82,6 @@ describe("fine grained tests", () => {
       })
     );
   });
-
   it("User Created with empty string", () => {
     const app = new cdk.App();
     const userNames = ["user1", "user2"];
@@ -95,11 +89,10 @@ describe("fine grained tests", () => {
     const prefix = "";
     const stack = new Iam.IamUserStack(app, "MyTestStack", {
       userNames: userNames,
-      strictedIps: ["0.0.0.0/0"],
+      strictedCidrs: ["0.0.0.0/0"],
       groupName: groupName,
       prefix: prefix,
     });
-
     userNames.forEach((user) => {
       expectCDK(stack).to(
         haveResource("AWS::IAM::User", {
@@ -113,7 +106,6 @@ describe("fine grained tests", () => {
       );
     });
   });
-
   it("User Created with master", () => {
     const app = new cdk.App();
     const userNames = ["user1", "user2"];
@@ -121,11 +113,10 @@ describe("fine grained tests", () => {
     const prefix = "master";
     const stack = new Iam.IamUserStack(app, "MyTestStack", {
       userNames: userNames,
-      strictedIps: ["0.0.0.0/0"],
+      strictedCidrs: ["0.0.0.0/0"],
       groupName: groupName,
       prefix: prefix,
     });
-
     userNames.forEach((user) => {
       expectCDK(stack).to(
         haveResource("AWS::IAM::User", {
@@ -139,7 +130,6 @@ describe("fine grained tests", () => {
       );
     });
   });
-
   it("User Created with main", () => {
     const app = new cdk.App();
     const userNames = ["user1", "user2"];
@@ -147,11 +137,10 @@ describe("fine grained tests", () => {
     const prefix = "main";
     const stack = new Iam.IamUserStack(app, "MyTestStack", {
       userNames: userNames,
-      strictedIps: ["0.0.0.0/0"],
+      strictedCidrs: ["0.0.0.0/0"],
       groupName: groupName,
       prefix: prefix,
     });
-
     userNames.forEach((user) => {
       expectCDK(stack).to(
         haveResource("AWS::IAM::User", {
@@ -165,17 +154,15 @@ describe("fine grained tests", () => {
       );
     });
   });
-
   it("User Created without prefix", () => {
     const app = new cdk.App();
     const userNames = ["user1", "user2"];
     const groupName = "test-group";
     const stack = new Iam.IamUserStack(app, "MyTestStack", {
       userNames: userNames,
-      strictedIps: ["0.0.0.0/0"],
+      strictedCidrs: ["0.0.0.0/0"],
       groupName: groupName,
     });
-
     userNames.forEach((user) => {
       expectCDK(stack).to(
         haveResource("AWS::IAM::User", {
@@ -189,7 +176,6 @@ describe("fine grained tests", () => {
       );
     });
   });
-
   it("Group Created", () => {
     const app = new cdk.App();
     const userNames = ["user1"];
@@ -197,7 +183,7 @@ describe("fine grained tests", () => {
     const groupName = "test-group";
     const stack = new Iam.IamUserStack(app, "MyTestStack", {
       userNames: userNames,
-      strictedIps: ["0.0.0.0/0"],
+      strictedCidrs: ["0.0.0.0/0"],
       groupName: groupName,
       prefix: prefix,
     });
@@ -207,7 +193,6 @@ describe("fine grained tests", () => {
       })
     );
   });
-
   it("Group Created without prefix", () => {
     const app = new cdk.App();
     const userNames = ["user1"];
@@ -215,7 +200,7 @@ describe("fine grained tests", () => {
     const groupName = "test-group";
     const stack = new Iam.IamUserStack(app, "MyTestStack", {
       userNames: userNames,
-      strictedIps: ["0.0.0.0/0"],
+      strictedCidrs: ["0.0.0.0/0"],
       groupName: groupName,
       prefix: prefix,
     });
@@ -226,7 +211,6 @@ describe("fine grained tests", () => {
     );
   });
 });
-
 describe("validation tests", () => {
   it("pass valid ip", () => {
     const app = new cdk.App();
@@ -235,11 +219,10 @@ describe("validation tests", () => {
     const prefix = "test";
     const stack = new Iam.IamUserStack(app, "MyTestStack", {
       userNames: userNames,
-      strictedIps: ["0.0.0.0/0"],
+      strictedCidrs: ["0.0.0.0/0"],
       groupName: groupName,
       prefix: prefix,
     });
-
     userNames.forEach((user) => {
       expectCDK(stack).to(
         haveResource("AWS::IAM::User", {
@@ -248,7 +231,6 @@ describe("validation tests", () => {
       );
     });
   });
-
   it("pass invalid ip", () => {
     const app = new cdk.App();
     const userNames = ["user1"];
@@ -256,7 +238,7 @@ describe("validation tests", () => {
     try {
       new Iam.IamUserStack(app, "MyTestStack", {
         userNames: userNames,
-        strictedIps: ["0.0.0.256/0"],
+        strictedCidrs: ["0.0.0.256/0"],
         groupName: groupName,
       });
       throw new Error("failed");
