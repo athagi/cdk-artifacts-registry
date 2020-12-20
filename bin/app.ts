@@ -40,31 +40,26 @@ function getProps() {
     console.error("Please consider adding a .env file with DELETION_POLICY.");
     process.exit(1);
   }
-  const deletionPolicyStr = process.env.DELETION_POLICY;
-  if (
-    deletionPolicyStr != cdk.RemovalPolicy.DESTROY.toString() &&
-    deletionPolicyStr != cdk.RemovalPolicy.RETAIN.toString() &&
-    deletionPolicyStr != cdk.RemovalPolicy.SNAPSHOT.toString()
-  ) {
-    console.error('Error: "DELETION_POLICY" is invalid.');
-    console.error("Please set valid value in .env file with DELETION_POLICY.");
-    process.exit(1);
-  }
+  const deletionPolicyStr = process.env.DELETION_POLICY.toLowerCase();
   let deletionPolicy: cdk.RemovalPolicy;
-  switch (deletionPolicyStr.toLowerCase()) {
-    case cdk.RemovalPolicy.RETAIN.toString():
+  switch (deletionPolicyStr) {
+    case cdk.CfnDeletionPolicy.RETAIN.toString().toLowerCase():
       deletionPolicy = cdk.RemovalPolicy.RETAIN;
       break;
-    case cdk.RemovalPolicy.SNAPSHOT.toString():
+    case cdk.CfnDeletionPolicy.SNAPSHOT.toString().toLowerCase():
       deletionPolicy = cdk.RemovalPolicy.SNAPSHOT;
       break;
-    case cdk.RemovalPolicy.DESTROY.toString():
+    case cdk.CfnDeletionPolicy.DELETE.toString().toLowerCase():
       deletionPolicy = cdk.RemovalPolicy.DESTROY;
       break;
     default:
-      console.error("invalid deletion policy with DELETION_POLICY");
+      console.error('Error: "DELETION_POLICY" is invalid.');
+      console.error(
+        "Please set valid value in .env file with DELETION_POLICY."
+      );
       process.exit(1);
   }
+
   if (typeof process.env.STACK_TERMINATION_PROTECTION == "undefined") {
     console.error('Error: "STACK_TERMINATION_PROTECTION" is not set.');
     console.error(
