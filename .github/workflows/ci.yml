@@ -33,6 +33,10 @@ jobs:
       github.event.pull_request
     steps:
       - run: env
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
       - name: Checkout code
         uses: actions/checkout@v2
       - name: cdk diff
@@ -41,17 +45,7 @@ jobs:
           cdk_subcommand: "diff"
           actions_comment: true
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: "ap-northeast-1"
-      - name: cdk deploy
-        uses: youyo/aws-cdk-github-actions@v1
-        with:
-          cdk_subcommand: "deploy"
-          cdk_args: "--require-approval never"
-          actions_comment: false
-        env:
-          ENV: ${ GITHUB_REF#refs/heads/ }
+          ENV: ${{ steps.extract_branch.outputs.branch }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "ap-northeast-1"
