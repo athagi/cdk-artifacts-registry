@@ -5,6 +5,11 @@ on:
     branches:
       - main
 
+env:
+  MASTER_BRANCH: main
+  CDK_VERSION: "1.76.0"
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   super-lint:
     name: Lint code base
@@ -16,7 +21,7 @@ jobs:
       - name: Run Super-Linter
         uses: github/super-linter@v3
         env:
-          DEFAULT_BRANCH:
+          DEFAULT_BRANCH: ${{ MASTER_BRANCH }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_JAVASCRIPT_ES: true
 
@@ -24,7 +29,8 @@ jobs:
     needs: [super-lint]
     name: deploy cdk staging stacks
     runs-on: ubuntu-latest
-
+    if: |
+      github.event.pull_request
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -34,17 +40,6 @@ jobs:
         shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
-      - name: cdk synth
-        uses: youyo/aws-cdk-github-actions@v1
-        with:
-          cdk_subcommand: "synth"
-          cdk_version: "1.16.2"
-          working_dir: "src"
-        env:
-          ENV: ${{ steps.extract_branch.outputs.branch }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: "ap-northeast-1"
       - name: cdk diff
         uses: youyo/aws-cdk-github-actions@v1
         with:
@@ -55,24 +50,6 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "ap-northeast-1"
           ENV: ${{ steps.extract_branch.outputs.branch }}
-
-  diff-with-master:
-    needs: [super-lint]
-    name: diff cdk stacks with main
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: cdk diff
-        uses: youyo/aws-cdk-github-actions@v1
-        with:
-          cdk_subcommand: "diff"
-          actions_comment: true
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: "ap-northeast-1"
-          ENV: main
       - name: cdk deploy
         uses: youyo/aws-cdk-github-actions@v1
         with:
@@ -85,6 +62,26 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "ap-northeast-1"
 
+  diff-with-master:
+    needs: [super-lint]
+    name: diff cdk stacks with main
+    runs-on: ubuntu-latest
+    if: |
+      github.event.pull_request
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: cdk diff
+        uses: youyo/aws-cdk-github-actions@v1
+        with:
+          cdk_subcommand: "diff"
+          actions_comment: true
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "ap-northeast-1"
+          ENV: ${{ MASTER_BRANCH }}
+
   delete-resources:
     name: delete cdk stacks
     runs-on: ubuntu-latest
@@ -92,7 +89,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - run: echo ${{github.base_ref}} && echo ${{github.head_ref}}
+      - run: echo ${{github.base_ref}}
+      - run: echo ${{github.head_ref}}
       - name: delete
         uses: youyo/aws-cdk-github-actions@v1
         with:
@@ -118,7 +116,6 @@ jobs:
         shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
-      - run: echo ${{github.base_ref}} && echo ${{github.head_ref}}
       - name: cdk diff
         uses: youyo/aws-cdk-github-actions@v1
         with:
