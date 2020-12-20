@@ -21,7 +21,7 @@ jobs:
       - name: Run Super-Linter
         uses: github/super-linter@v3
         env:
-          DEFAULT_BRANCH: ${{ MASTER_BRANCH }}
+          DEFAULT_BRANCH: ${{ env.MASTER_BRANCH }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_JAVASCRIPT_ES: true
 
@@ -80,7 +80,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "ap-northeast-1"
-          ENV: ${{ MASTER_BRANCH }}
+          ENV: ${{ env.MASTER_BRANCH }}
 
   delete-resources:
     name: delete cdk stacks
