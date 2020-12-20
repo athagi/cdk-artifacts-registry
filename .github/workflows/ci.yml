@@ -44,7 +44,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "ap-northeast-1"
-          ENV: ${{ GITHUB_HEAD_REF }}
+          ENV: ${GITHUB_HEAD_REF}
       - name: cdk deploy
         uses: youyo/aws-cdk-github-actions@v1
         with:
@@ -52,7 +52,7 @@ jobs:
           cdk_args: "--require-approval never"
           actions_comment: false
         env:
-          ENV: ${{ GITHUB_HEAD_REF }}
+          ENV: ${GITHUB_HEAD_REF}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "ap-northeast-1"
@@ -75,7 +75,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "ap-northeast-1"
-          ENV: ${{ GITHUB_BASE_REF }}
+          ENV: ${GITHUB_BASE_REF}
 
   delete-resources:
     name: delete cdk stacks
