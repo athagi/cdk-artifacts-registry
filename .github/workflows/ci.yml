@@ -21,41 +21,29 @@ jobs:
       - name: Run Super-Linter
         uses: github/super-linter@v3
         env:
-          DEFAULT_BRANCH: ${{ env.MASTER_BRANCH }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_JAVASCRIPT_ES: true
 
-  staging-deploy:
+  staging:
     needs: [super-lint]
-    name: deploy cdk staging stacks
+    name: check cdk staging stacks
     runs-on: ubuntu-latest
     if: |
       github.event.pull_request
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Branch name
-        run: echo running on branch ${GITHUB_REF##*/}
+      - run: env
       - name: Extract branch name
         shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_HEAD_REF#refs/heads/})"
         id: extract_branch
+      - name: Checkout code
+        uses: actions/checkout@v2
       - name: cdk diff
         uses: youyo/aws-cdk-github-actions@v1
         with:
           cdk_subcommand: "diff"
           actions_comment: true
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: "ap-northeast-1"
-          ENV: ${{ steps.extract_branch.outputs.branch }}
-      - name: cdk deploy
-        uses: youyo/aws-cdk-github-actions@v1
-        with:
-          cdk_subcommand: "deploy"
-          cdk_args: "--require-approval never"
-          actions_comment: false
         env:
           ENV: ${{ steps.extract_branch.outputs.branch }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -80,27 +68,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "ap-northeast-1"
-          ENV: ${{ env.MASTER_BRANCH }}
-
-  delete-resources:
-    name: delete cdk stacks
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - run: echo ${{github.base_ref}}
-      - run: echo ${{github.head_ref}}
-      - name: delete
-        uses: youyo/aws-cdk-github-actions@v1
-        with:
-          cdk_subcommand: "destroy"
-          actions_comment: false
-        env:
-          ENV: ${{github.base_ref}}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: "ap-northeast-1"
+          ENV: ${{github.event.repository.default_branch}}
 
   deploy:
     name: deploy cdk stacks
@@ -110,12 +78,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Branch name
-        run: echo running on branch ${GITHUB_REF##*/}
-      - name: Extract branch name
-        shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: extract_branch
       - name: cdk diff
         uses: youyo/aws-cdk-github-actions@v1
         with:
@@ -125,7 +87,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "ap-northeast-1"
-          ENV: ${{ steps.extract_branch.outputs.branch }}
+          ENV: ${{ github.event.repository.default_branch }}
       - name: cdk deploy
         uses: youyo/aws-cdk-github-actions@v1
         with:
@@ -133,7 +95,7 @@ jobs:
           cdk_args: "--require-approval never"
           actions_comment: false
         env:
-          ENV: ${{ steps.extract_branch.outputs.branch }}
+          ENV: ${{ github.event.repository.default_branch }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "ap-northeast-1"
