@@ -35,12 +35,6 @@ jobs:
       - run: env
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Branch name
-        run: echo running on branch ${GITHUB_REF##*/}
-      - name: Extract branch name
-        shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: extract_branch
       - name: cdk diff
         uses: youyo/aws-cdk-github-actions@v1
         with:
@@ -50,7 +44,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "ap-northeast-1"
-          ENV: ${{ steps.extract_branch.outputs.branch }}
+          ENV: ${{ GITHUB_HEAD_REF }}
       - name: cdk deploy
         uses: youyo/aws-cdk-github-actions@v1
         with:
@@ -58,7 +52,7 @@ jobs:
           cdk_args: "--require-approval never"
           actions_comment: false
         env:
-          ENV: ${{ steps.extract_branch.outputs.branch }}
+          ENV: ${{ GITHUB_HEAD_REF }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "ap-northeast-1"
@@ -81,7 +75,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "ap-northeast-1"
-          ENV: ${{ env.MASTER_BRANCH }}
+          ENV: ${{ GITHUB_BASE_REF }}
 
   delete-resources:
     name: delete cdk stacks
@@ -109,6 +103,7 @@ jobs:
     needs: [super-lint]
     if: github.ref == 'refs/heads/main'
     steps:
+      - run: env
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Branch name
